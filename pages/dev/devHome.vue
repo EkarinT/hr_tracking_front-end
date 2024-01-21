@@ -368,6 +368,7 @@
 
 <script>
 export default {
+  layout: 'devLayout',
   data () {
     return {
 
@@ -520,7 +521,7 @@ export default {
 
     async getData () {
       try {
-        const res = await this.$axios.$get('http://localhost:8001/report')
+        const res = await this.$axios.$get('http://localhost:8001/report/devReport')
         // console.log(res.result)
 
         const result = res.result.map((element) => {
