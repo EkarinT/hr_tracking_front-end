@@ -368,6 +368,7 @@
 
 <script>
 export default {
+  layout: 'hrToken',
   data () {
     return {
 
@@ -388,9 +389,7 @@ export default {
       hrApprove: false,
       status: [
         { text: 'รอแก้ไข', value: 1 },
-        { text: 'Dev ตรวจสอบ', value: 2 },
-        { text: 'Dev แก้ไขแล้ว', value: 3 },
-        { text: 'HR ยืนยัน', value: 4 }
+        { text: 'HR ยืนยัน', value: 2 }
       ],
       dialog: false,
       dialogEdit: false,
@@ -520,9 +519,8 @@ export default {
 
     async getData () {
       try {
-        const res = await this.$axios.$get('http://localhost:8001/report')
+        const res = await this.$axios.$get('http://localhost:8001/report/hrReport')
         // console.log(res.result)
-
         const result = res.result.map((element) => {
           element.error_date = this.formatDateToCustom(element.error_date)
           return element
@@ -568,7 +566,7 @@ export default {
     },
 
     async signOut () {
-      await localStorage.removeItem('adminToken')
+      await localStorage.removeItem('hrToken')
       this.$router.push('/')
     },
     // dateTest (date) {

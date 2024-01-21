@@ -88,30 +88,32 @@ export default {
         )
         console.log(res)
         if (res.token) {
-          await this.$axios.setToken(res.token, 'Bearer')
-          localStorage.setItem('adminToken', res.token)
-
-          console.log(res)
           // const resAdmin = await this.$axios.$get(
           //   'http://localhost:8001/auth/me'
           // )
 
           // console.log(resAdmin)
-          if (res.result.role === 1) {
+          if (res.result.role === 1 && res.token) {
             this.isHr = false
             this.isDev = false
             this.$router.push('/hr/hrHome')
+            await this.$axios.setToken(res.token, 'Bearer')
+            localStorage.setItem('hrToken', res.token)
           }
 
-          if (res.result.role === 2) {
+          if (res.result.role === 2 && res.token) {
             this.isAdmin = false
             this.isDev = false
             this.$router.push('/dev/devHome')
+            await this.$axios.setToken(res.token, 'Bearer')
+            localStorage.setItem('devToken', res.token)
           }
-          if (res.result.role === 3) {
+          if (res.result.role === 3 && res.token) {
             this.isAdmin = false
             this.isHr = false
             this.$router.push('/home')
+            await this.$axios.setToken(res.token, 'Bearer')
+            localStorage.setItem('adminToken', res.token)
           }
         }
       } catch (err) {
