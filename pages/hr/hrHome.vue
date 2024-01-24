@@ -19,8 +19,8 @@
             >
               <div>
                 <div class="d-flex flex-column">
-                  <span>FirstName LastName</span>
-                  <span>position</span>
+                  <span>{{ user.firstName }} {{ user.surName }}</span>
+                  <span>{{ user.role }}</span>
                 </div>
               </div>
             </v-btn>
@@ -373,6 +373,11 @@ export default {
     return {
 
       getdetail: [],
+      user: {
+        firstName: '',
+        surName: '',
+        role: ''
+      },
       counter: 1,
       countWait: 0,
       countCheck: 0,
@@ -431,7 +436,7 @@ export default {
 
   mounted () {
     this.getData()
-    // this.getAdmin()
+    this.getHr()
   },
 
   methods: {
@@ -499,7 +504,7 @@ export default {
           path: this.editedItem.path.name
         }
         await this.$axios.$post(
-          'http://localhost:8001/report/create/',
+          'http://localhost:8001/report/hrCreate/',
           payload
         )
         console.log(payload)
@@ -514,13 +519,21 @@ export default {
         title: 'Report has been created',
         timer: 2000
       })
-    //   window.location.reload()
+      // window.location.reload()
     },
+    async getHr () {
+      try {
+        const hrDetail = await this.$axios.$get('http://localhost:8001/report/getHr')
+        this.user.firstName = hrDetail.result.firstName
+        this.user.surName = hrDetail.result.surName
+        this.user.role = hrDetail.result.role
+      } catch (err) {
 
+      }
+    },
     async getData () {
       try {
         const res = await this.$axios.$get('http://localhost:8001/report/hrReport')
-        // console.log(res.result)
         const result = res.result.map((element) => {
           element.error_date = this.formatDateToCustom(element.error_date)
           return element
