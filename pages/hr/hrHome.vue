@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #e5efff;">
+  <div style="background-color: #e5efff">
     <div>
       <nav class="d-flex justify-space-between align-center primary">
         <div class="d-flex align-center">
@@ -13,10 +13,7 @@
             class="d-flex"
             style="background-color: #6aa1d3; color: white"
           >
-            <v-btn
-              color="#CDDFF0"
-              @click="signOut()"
-            >
+            <v-btn color="#CDDFF0" @click="signOut()">
               <div>
                 <div class="d-flex flex-column">
                   <span>{{ user.firstName }} {{ user.surName }}</span>
@@ -346,7 +343,7 @@
           </v-toolbar>
         </template>
 
-        <template #[`item.actions`]="{item}">
+        <template #[`item.actions`]="{ item }">
           <v-icon small class="mr-2" color="primary" @click="editItem(item)">
             mdi-pencil
           </v-icon>
@@ -371,11 +368,11 @@ export default {
   layout: 'hrToken',
   data () {
     return {
-
       getdetail: [],
       user: {
         firstName: '',
         surName: '',
+        userId: null,
         role: ''
       },
       counter: 1,
@@ -413,11 +410,13 @@ export default {
         name: null,
         detail: null,
         cause: null,
-        error_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        error_date: new Date(
+          Date.now() - new Date().getTimezoneOffset() * 60000
+        )
           .toISOString()
           .substr(0, 10),
         path: null,
-        status: null
+        status: 1
       }
     }
   },
@@ -452,7 +451,6 @@ export default {
       this.editedItem.error_date = item.error_date
       this.editedItem.status = item.status
       this.dialogEdit = true
-      // console.log(this.editedItem)
     },
 
     close () {
@@ -480,7 +478,6 @@ export default {
           // path: this.editedItem.path.name,
           status: this.editedItem.status
         }
-        // console.log(payload)
         await this.$axios.$post('http://localhost:8001/report/update', payload)
       } catch (err) {
         console.log(err)
@@ -501,14 +498,15 @@ export default {
           detail: this.editedItem.detail,
           cause: this.editedItem.cause,
           error_date: this.editedItem.error_date,
-          path: this.editedItem.path.name
+          firstName: this.user.firstName,
+          surName: this.user.surName,
+          userId: this.user.userId
         }
+        console.log('payload', payload)
         await this.$axios.$post(
-          'http://localhost:8001/report/hrCreate/',
+          'http://localhost:8001/report/hrCreate',
           payload
         )
-        console.log(payload)
-        // console.log(this.editedItem.path)
       } catch (error) {
         console.log(error)
       }
@@ -523,37 +521,40 @@ export default {
     },
     async getHr () {
       try {
-        const hrDetail = await this.$axios.$get('http://localhost:8001/report/getHr')
+        const hrDetail = await this.$axios.$get(
+          'http://localhost:8001/report/getHr'
+        )
         this.user.firstName = hrDetail.result.firstName
         this.user.surName = hrDetail.result.surName
         this.user.role = hrDetail.result.role
-      } catch (err) {
-
-      }
+        this.user.userId = hrDetail.result.user_id
+      } catch (err) {}
     },
     async getData () {
       try {
-        const res = await this.$axios.$get('http://localhost:8001/report/hrReport')
+        const res = await this.$axios.$get(
+          'http://localhost:8001/report/hrReport'
+        )
         const result = res.result.map((element) => {
           element.error_date = this.formatDateToCustom(element.error_date)
           return element
         })
-        this.getdetail = result
+        console.log(result)
+        // this.getdetail = result
         this.listAll = result
-
         for (let i = 0; i <= this.getdetail.length; i++) {
           if (res.result[i].status === 1) {
             this.countWait++
           }
-          if (res.result[i].status === 2) {
-            this.countCheck++
-          }
-          if (res.result[i].status === 3) {
-            this.countDone++
-          }
-          if (res.result[i].status === 4) {
-            this.countApprove++
-          }
+          // if (res.result[i].status === 2) {
+          //   this.countCheck++
+          // }
+          // if (res.result[i].status === 3) {
+          //   this.countDone++
+          // }
+          // if (res.result[i].status === 4) {
+          //   this.countApprove++
+          // }
         }
       } catch (err) {
         console.log(err)
@@ -580,6 +581,7 @@ export default {
 
     async signOut () {
       await localStorage.removeItem('hrToken')
+      await localStorage.clear()
       this.$router.push('/')
     },
     // dateTest (date) {
