@@ -478,7 +478,7 @@ export default {
           // path: this.editedItem.path.name,
           status: this.editedItem.status
         }
-        await this.$axios.$post('http://localhost:8001/report/update', payload)
+        await this.$axios.$post('http://localhost:8001/report/hrUpdate', payload)
       } catch (err) {
         console.log(err)
       }
