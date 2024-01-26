@@ -502,7 +502,6 @@ export default {
           surName: this.user.surName,
           userId: this.user.userId
         }
-        console.log('payload', payload)
         await this.$axios.$post(
           'http://localhost:8001/report/hrCreate',
           payload
@@ -528,7 +527,9 @@ export default {
         this.user.surName = hrDetail.result.surName
         this.user.role = hrDetail.result.role
         this.user.userId = hrDetail.result.user_id
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     },
     async getData () {
       try {
@@ -539,22 +540,21 @@ export default {
           element.error_date = this.formatDateToCustom(element.error_date)
           return element
         })
-        console.log(result)
-        // this.getdetail = result
+        this.getdetail = result
         this.listAll = result
-        for (let i = 0; i <= this.getdetail.length; i++) {
+        for (let i = 0; i < this.getdetail.length; i++) {
           if (res.result[i].status === 1) {
             this.countWait++
           }
-          // if (res.result[i].status === 2) {
-          //   this.countCheck++
-          // }
-          // if (res.result[i].status === 3) {
-          //   this.countDone++
-          // }
-          // if (res.result[i].status === 4) {
-          //   this.countApprove++
-          // }
+          if (res.result[i].status === 2) {
+            this.countCheck++
+          }
+          if (res.result[i].status === 3) {
+            this.countDone++
+          }
+          if (res.result[i].status === 4) {
+            this.countApprove++
+          }
         }
       } catch (err) {
         console.log(err)
