@@ -13,13 +13,18 @@
             class="d-flex"
             style="background-color: #6aa1d3; color: white"
           >
-            <v-btn color="#CDDFF0" @click="signOut()">
+            <v-btn color="#CDDFF0" @click="dropdown = !dropdown">
               <div>
                 <div class="d-flex flex-column">
                   <span>{{ user.firstName }} {{ user.surName }}</span>
                   <span>{{ user.role }}</span>
                 </div>
               </div>
+            </v-btn>
+          </v-card>
+          <v-card v-if="dropdown === true" style="padding-right: 10px">
+            <v-btn block @click="signOut">
+              Sign out
             </v-btn>
           </v-card>
         </div>
@@ -282,7 +287,7 @@
               </v-card>
             </v-dialog>
 
-            <v-dialog v-model="dialogEdit" MAX-WIDTH="1000px">
+            <v-dialog v-model="dialogEdit" max-width="1000px">
               <v-card>
                 <v-card-text>
                   <v-row>
@@ -322,6 +327,11 @@
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
                   </v-btn>
+                  <v-col v-if="editedItem.status === 4">
+                    <v-btn color="primary">
+                      HR ยืนยัน
+                    </v-btn>
+                  </v-col>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -389,9 +399,10 @@ export default {
       checkingDev: false,
       fixedByDev: false,
       hrApprove: false,
+      dropdown: false,
       status: [
         { text: 'รอแก้ไข', value: 1 },
-        { text: 'HR ยืนยัน', value: 2 }
+        { text: 'HR ยืนยัน', value: 4 }
       ],
       dialog: false,
       dialogEdit: false,
@@ -491,6 +502,16 @@ export default {
       })
       window.location.reload()
     },
+
+    async changeStatus () {
+      try {
+        if (this.editedItem === 3) {
+          await this.$axios.$post('http://localhost:8001/report/changeToApprove', this.editedItem.id)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async createReport () {
       try {
         const payload = {
@@ -516,7 +537,7 @@ export default {
         title: 'Report has been created',
         timer: 2000
       })
-      // window.location.reload()
+      window.location.reload()
     },
     async getHr () {
       try {

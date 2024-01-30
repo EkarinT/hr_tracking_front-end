@@ -566,7 +566,7 @@ export default {
         this.getdetail = result
         this.listAll = result
 
-        for (let i = 0; i <= this.getdetail.length; i++) {
+        for (let i = 0; i < this.getdetail.length; i++) {
           if (res.result[i].status === 1) {
             this.countWait++
           }

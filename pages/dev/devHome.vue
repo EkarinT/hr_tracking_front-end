@@ -15,14 +15,19 @@
           >
             <v-btn
               color="#CDDFF0"
-              @click="signOut()"
+              @click="dropdown = !dropdown"
             >
               <div>
                 <div class="d-flex flex-column">
-                  <span>FirstName LastName</span>
-                  <span>position</span>
+                  <span>{{ user.firstName }} {{ user.surName }}</span>
+                  <span>{{ user.role }}</span>
                 </div>
               </div>
+            </v-btn>
+          </v-card>
+          <v-card v-if="dropdown === true" style="padding-right: 10px">
+            <v-btn block @click="signOut">
+              Sign out
             </v-btn>
           </v-card>
         </div>
@@ -194,11 +199,11 @@
           style="background-color: #ffffff"
         />
       </v-col>
-      <v-col align="right" style="margin-right: 11%">
+      <!-- <v-col align="right" style="margin-right: 11%">
         <v-btn color="primary" dark class="mb-2" @click="report()">
           แจ้งปัญหา
         </v-btn>
-      </v-col>
+      </v-col> -->
     </v-row>
     <div style="margin-left: 10%; margin-right: 10%; margin-top: 1%">
       <v-data-table
@@ -272,7 +277,6 @@
                     </v-col>
                   </v-row>
                 </v-card-text>
-
                 <v-card-actions>
                   <v-spacer />
                   <v-btn color="blue darken-1" text @click="close">
@@ -285,7 +289,7 @@
               </v-card>
             </v-dialog>
 
-            <v-dialog v-model="dialogEdit" MAX-WIDTH="1000px">
+            <v-dialog v-model="dialogEdit" max-width="1000px">
               <v-card>
                 <v-card-text>
                   <v-row>
@@ -325,6 +329,26 @@
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
                   </v-btn>
+                  <v-col v-if="editedItem.status === 1">
+                    <v-btn color="primary" @click="changeStatus">
+                      รับเรื่อง
+                    </v-btn>
+                  </v-col>
+                  <v-col v-else-if="editedItem.status === 2">
+                    <v-btn color="primary">
+                      ตรวจสอบเสร็จแล้ว
+                    </v-btn>
+                  </v-col>
+                  <v-col v-else-if="editedItem.status === 3">
+                    <v-btn color="primary">
+                      แก้ไขแล้ว
+                    </v-btn>
+                  </v-col>
+                  <v-col v-else>
+                    <v-btn color="primary">
+                      แก้ไขใหม่
+                    </v-btn>
+                  </v-col>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -371,8 +395,13 @@ export default {
   layout: 'devLayout',
   data () {
     return {
-
       getdetail: [],
+      user: {
+        firstName: null,
+        surName: null,
+        role: null,
+        userId: null
+      },
       counter: 1,
       countWait: 0,
       countCheck: 0,
@@ -390,13 +419,13 @@ export default {
       status: [
         { text: 'รอแก้ไข', value: 1 },
         { text: 'Dev ตรวจสอบ', value: 2 },
-        { text: 'Dev แก้ไขแล้ว', value: 3 },
-        { text: 'HR ยืนยัน', value: 4 }
+        { text: 'Dev แก้ไขแล้ว', value: 3 }
       ],
       dialog: false,
       dialogEdit: false,
       dialogPic: false,
       menu2: false,
+      dropdown: false,
       headers: [
         { text: 'ลำดับ', value: 'id', align: 'center', sortable: false },
         { text: 'ชื่อระบบ', value: 'name', sortable: false },
@@ -433,7 +462,7 @@ export default {
 
   mounted () {
     this.getData()
-    // this.getAdmin()
+    this.getDev()
   },
 
   methods: {
@@ -467,6 +496,18 @@ export default {
     showPic () {
       this.dialogPic = true
     },
+
+    async getDev () {
+      try {
+        const getDev = await this.$axios.$get('http://localhost:8001/report/getDev')
+        this.user.firstName = getDev.result.firstName
+        this.user.surName = getDev.result.surName
+        this.user.role = getDev.result.role
+        this.user.userId = getDev.result.user_id
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async updateReport () {
       try {
         const payload = {
@@ -478,7 +519,7 @@ export default {
           status: this.editedItem.status
         }
         // console.log(payload)
-        await this.$axios.$post('http://localhost:8001/report/update', payload)
+        await this.$axios.$post('http://localhost:8001/report/devUpdate', payload)
       } catch (err) {
         console.log(err)
       }
@@ -491,33 +532,70 @@ export default {
       })
       window.location.reload()
     },
-    async createReport () {
+
+    async changeStatus () {
       try {
-        const payload = {
-          name: this.editedItem.name,
-          detail: this.editedItem.detail,
-          cause: this.editedItem.cause,
-          error_date: this.editedItem.error_date,
-          path: this.editedItem.path.name
+        if (this.editedItem.status === 1) {
+          console.log(this.editedItem.id)
+          const payload = {
+            id: this.editedItem.id
+          }
+          await this.$axios.$post('http://localhost:8001/report/changeStatusToProcess', payload)
+          this.closeEdit()
+          await this.$swal({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'Report has been updated',
+            timer: 2000
+          })
+          window.location.reload()
+        } else if (this.editedItem.status === 2) {
+          const payload = {
+            id: this.editedItem.id
+          }
+          await this.$axios.$post('http://localhost:8001/report/changeStatusToDevFixed', payload)
+          this.closeEdit()
+          await this.$swal({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'Report has been updated',
+            timer: 2000
+          })
+          window.location.reload()
+        } else {
+          console.log('stay still!')
         }
-        await this.$axios.$post(
-          'http://localhost:8001/report/create/',
-          payload
-        )
-        console.log(payload)
-        // console.log(this.editedItem.path)
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
+        console.log(err)
       }
-      this.close()
-      await this.$swal({
-        icon: 'success',
-        showConfirmButton: false,
-        title: 'Report has been created',
-        timer: 2000
-      })
-    //   window.location.reload()
     },
+    // async createReport () {
+    //   try {
+    //     const payload = {
+    //       name: this.editedItem.name,
+    //       detail: this.editedItem.detail,
+    //       cause: this.editedItem.cause,
+    //       error_date: this.editedItem.error_date,
+    //       path: this.editedItem.path.name
+    //     }
+    //     await this.$axios.$post(
+    //       'http://localhost:8001/report/create',
+    //       payload
+    //     )
+    //     console.log(payload)
+    //     // console.log(this.editedItem.path)
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    //   this.close()
+    //   await this.$swal({
+    //     icon: 'success',
+    //     showConfirmButton: false,
+    //     title: 'Report has been created',
+    //     timer: 2000
+    //   })
+    //   window.location.reload()
+    // },
 
     async getData () {
       try {
@@ -531,7 +609,7 @@ export default {
         this.getdetail = result
         this.listAll = result
 
-        for (let i = 0; i <= this.getdetail.length; i++) {
+        for (let i = 0; i < this.getdetail.length; i++) {
           if (res.result[i].status === 1) {
             this.countWait++
           }
@@ -569,7 +647,7 @@ export default {
     },
 
     async signOut () {
-      await localStorage.removeItem('adminToken')
+      await localStorage.removeItem('devToken')
       this.$router.push('/')
     },
     // dateTest (date) {
