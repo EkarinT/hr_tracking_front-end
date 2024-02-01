@@ -263,6 +263,33 @@
                         />
                       </v-menu>
                     </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        v-model="menu3"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="editedItem.error_time"
+                            label="เวลาที่พบปัญหา"
+                            prepend-icon="mdi-timer-outline"
+                            v-bind="attrs"
+                            readonly
+                            v-on="on"
+                          />
+                        </template>
+                        <v-time-picker
+                          v-model="editedItem.error_time"
+                          scrollable
+                          format="24hr"
+                          @input="menu3 = true"
+                        />
+                      </v-menu>
+                    </v-col>
                     <v-col>
                       <v-file-input
                         id="fileInput"
@@ -327,8 +354,8 @@
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
                   </v-btn>
-                  <v-col v-if="editedItem.status === 4">
-                    <v-btn color="primary">
+                  <v-col v-if="editedItem.status === 3">
+                    <v-btn color="primary" @click="changeStatus">
                       HR ยืนยัน
                     </v-btn>
                   </v-col>
@@ -408,6 +435,7 @@ export default {
       dialogEdit: false,
       dialogPic: false,
       menu2: false,
+      menu3: false,
       headers: [
         { text: 'ลำดับ', value: 'id', align: 'center', sortable: false },
         { text: 'ชื่อระบบ', value: 'name', sortable: false },
@@ -421,11 +449,8 @@ export default {
         name: null,
         detail: null,
         cause: null,
-        error_date: new Date(
-          Date.now() - new Date().getTimezoneOffset() * 60000
-        )
-          .toISOString()
-          .substr(0, 10),
+        error_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+        error_time: null,
         path: null,
         status: 1
       }
@@ -505,8 +530,20 @@ export default {
 
     async changeStatus () {
       try {
-        if (this.editedItem === 3) {
-          await this.$axios.$post('http://localhost:8001/report/changeToApprove', this.editedItem.id)
+        if (this.editedItem.status === 3) {
+          const payload = {
+            id: this.editedItem.id
+          }
+          console.log(payload)
+          await this.$axios.$post('http://localhost:8001/report/changeToApprove', payload)
+          this.closeEdit()
+          await this.$swal({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'Report has been updated',
+            timer: 2000
+          })
+          window.location.reload()
         }
       } catch (err) {
         console.log(err)
@@ -519,6 +556,7 @@ export default {
           detail: this.editedItem.detail,
           cause: this.editedItem.cause,
           error_date: this.editedItem.error_date,
+          error_time: this.editedItem.error_time,
           firstName: this.user.firstName,
           surName: this.user.surName,
           userId: this.user.userId

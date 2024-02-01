@@ -335,20 +335,20 @@
                     </v-btn>
                   </v-col>
                   <v-col v-else-if="editedItem.status === 2">
-                    <v-btn color="primary">
+                    <v-btn color="primary" @click="changeStatus">
                       ตรวจสอบเสร็จแล้ว
                     </v-btn>
                   </v-col>
-                  <v-col v-else-if="editedItem.status === 3">
+                  <!-- <v-col v-else-if="editedItem.status === 3">
                     <v-btn color="primary">
                       แก้ไขแล้ว
                     </v-btn>
-                  </v-col>
-                  <v-col v-else>
+                  </v-col> -->
+                  <!-- <v-col v-else>
                     <v-btn color="primary">
                       แก้ไขใหม่
                     </v-btn>
-                  </v-col>
+                  </v-col> -->
                 </v-card-actions>
               </v-card>
             </v-dialog>
