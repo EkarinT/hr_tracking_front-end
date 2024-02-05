@@ -297,48 +297,52 @@
                       <v-text-field
                         v-model="editedItem.name"
                         label="ชื่อระบบ"
+                        readonly
                       />
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.cause"
                         label="ปัญหาที่พบ"
+                        readonly
                       />
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.detail"
                         label="รายละเอียด"
+                        readonly
                       />
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <!-- <v-col cols="12" sm="6" md="4">
                       <v-select
                         v-model="editedItem.status"
                         :items="status"
                         outlined
                         dense
                       />
-                    </v-col>
+                    </v-col> -->
                   </v-row>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn color="blue darken-1" text @click="closeEdit">
+                  <!-- <v-btn color="blue darken-1" text @click="closeEdit">
                     ยกเลิก
                   </v-btn>
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
-                  </v-btn>
-                  <v-col v-if="editedItem.status === 1">
+                  </v-btn> -->
+                  <v-col v-if="editedItem.status === 1" style="padding-left: 15%;">
                     <v-btn color="primary" @click="changeStatus">
                       รับเรื่อง
                     </v-btn>
                   </v-col>
-                  <v-col v-else-if="editedItem.status === 2">
+                  <v-col v-else-if="editedItem.status === 2" style="padding-left: 15%;">
                     <v-btn color="primary" @click="changeStatus">
                       ตรวจสอบเสร็จแล้ว
                     </v-btn>
                   </v-col>
+                  <v-spacer />
                   <!-- <v-col v-else-if="editedItem.status === 3">
                     <v-btn color="primary">
                       แก้ไขแล้ว

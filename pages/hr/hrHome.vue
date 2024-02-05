@@ -322,39 +322,43 @@
                       <v-text-field
                         v-model="editedItem.name"
                         label="ชื่อระบบ"
+                        readonly
                       />
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.cause"
                         label="ปัญหาที่พบ"
+                        readonly
                       />
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         v-model="editedItem.detail"
                         label="รายละเอียด"
+                        readonly
                       />
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <!-- <v-col cols="12" sm="6" md="4">
                       <v-select
                         v-model="editedItem.status"
                         :items="status"
                         outlined
                         dense
+                        readonly
                       />
-                    </v-col>
+                    </v-col> -->
                   </v-row>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn color="blue darken-1" text @click="closeEdit">
+                  <!-- <v-btn color="blue darken-1" text @click="closeEdit">
                     ยกเลิก
                   </v-btn>
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
-                  </v-btn>
-                  <v-col v-if="editedItem.status === 3">
+                  </v-btn> -->
+                  <v-col v-if="editedItem.status === 3" style="padding-left: 15%;">
                     <v-btn color="primary" @click="changeStatus">
                       HR ยืนยัน
                     </v-btn>
@@ -484,7 +488,7 @@ export default {
       this.editedItem.name = item.name
       this.editedItem.detail = item.detail
       this.editedItem.cause = item.cause
-      this.editedItem.error_date = item.error_date
+      // this.editedItem.error_date = item.error_date
       this.editedItem.status = item.status
       this.dialogEdit = true
     },
