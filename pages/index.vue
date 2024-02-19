@@ -43,6 +43,9 @@
             :type="value ? 'password' : 'text'"
             @click:append="() => (value = !value)"
           />
+          <p v-if="incorrectUser === true" style="color: red !important; margin-left: 11%;">
+            Invalid username or password
+          </p>
           <div>
             <v-btn class="login-button" type="submit" color="primary">
               Log in
@@ -68,10 +71,7 @@ export default {
       isAdmin: false,
       isHr: false,
       isDev: false,
-      adminInfo: {
-        firstName: '',
-        surName: ''
-      }
+      incorrectUser: false
     }
   },
 
@@ -117,7 +117,7 @@ export default {
           }
         }
       } catch (err) {
-        console.log(err)
+        this.incorrectUser = true
       }
     }
   }
@@ -130,7 +130,6 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
 .form {
   margin-top: 9%;
   width: 50%;

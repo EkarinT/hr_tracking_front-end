@@ -26,6 +26,13 @@
             </v-btn>
           </v-card>
           <v-card v-if="dropdown === true" style="padding-right: 10px">
+            <v-card-subtitle align="center">
+              {{ user.firstName }}  {{ user.surName }}
+            </v-card-subtitle>
+            <v-card-subtitle align="center">
+              {{ user.role }}
+            </v-card-subtitle>
+            <br>
             <v-btn block @click="signOut">
               Sign out
             </v-btn>
