@@ -68,9 +68,6 @@ export default {
       image2: Image2,
       username: '',
       password: '',
-      isAdmin: false,
-      isHr: false,
-      isDev: false,
       incorrectUser: false
     }
   },
@@ -88,29 +85,18 @@ export default {
         )
         console.log(res)
         if (res.token) {
-          // const resAdmin = await this.$axios.$get(
-          //   'http://localhost:8001/auth/me'
-          // )
-
-          // console.log(resAdmin)
           if (res.result.role === 1 && res.token) {
-            this.isHr = false
-            this.isDev = false
             this.$router.push('/hr/hrHome')
             await this.$axios.setToken(res.token, 'Bearer')
             localStorage.setItem('hrToken', res.token)
           }
 
           if (res.result.role === 2 && res.token) {
-            this.isAdmin = false
-            this.isDev = false
             this.$router.push('/dev/devHome')
             await this.$axios.setToken(res.token, 'Bearer')
             localStorage.setItem('devToken', res.token)
           }
           if (res.result.role === 3 && res.token) {
-            this.isAdmin = false
-            this.isHr = false
             this.$router.push('/home')
             await this.$axios.setToken(res.token, 'Bearer')
             localStorage.setItem('adminToken', res.token)
@@ -184,5 +170,19 @@ export default {
   margin-top: 20px;
   position: fixed;
   z-index: 0;
+}
+
+@media screen and (min-width: 1920px) {
+  .login-button {
+  width: 300%;
+  margin-left: -36%;
+  padding-left: 57px !important;
+}
+
+.username-password {
+  color: black;
+  margin-right: 16%;
+  font-size: 16px;
+}
 }
 </style>

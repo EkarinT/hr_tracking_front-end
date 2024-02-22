@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #e5efff;">
+  <div style="background-color: #e5efff">
     <div>
       <nav class="d-flex justify-space-between align-center primary">
         <div class="d-flex align-center">
@@ -13,10 +13,7 @@
             class="d-flex"
             style="background-color: #6aa1d3; color: white"
           >
-            <v-btn
-              color="#CDDFF0"
-              @click="dropdown = !dropdown"
-            >
+            <v-btn color="#CDDFF0" @click="dropdown = !dropdown">
               <div>
                 <div class="d-flex flex-column">
                   <span>{{ user.firstName }} {{ user.surName }}</span>
@@ -25,14 +22,13 @@
               </div>
             </v-btn>
           </v-card>
-          <v-card v-if="dropdown === true" style="padding-right: 10px">
-            <v-card-subtitle align="center">
-              {{ user.firstName }}  {{ user.surName }}
+          <v-card v-if="dropdown === true" class="menuBar">
+            <v-card-subtitle class="v-subtitle" align="center">
+              {{ user.firstName }} {{ user.surName }}
             </v-card-subtitle>
             <v-card-subtitle align="center">
               {{ user.role }}
             </v-card-subtitle>
-            <br>
             <v-btn block @click="signOut">
               Sign out
             </v-btn>
@@ -122,7 +118,7 @@
                   :color="checkingDev ? '#DD3F2D' : '#FFE4E1'"
                 />
                 <v-list-item-content>
-                  <div class="text-overline">
+                  <div class="text-overline box">
                     dev ตรวจสอบ
                   </div>
                   <v-list-item-title class="text-h5">
@@ -151,7 +147,7 @@
                   :color="fixedByDev ? '#00B8C0' : '#E7FEFF'"
                 />
                 <v-list-item-content>
-                  <div class="text-overline">
+                  <div class="text-overline box">
                     DEV แก้ไขแล้ว
                   </div>
                   <v-list-item-title class="text-h5">
@@ -339,12 +335,18 @@
                   <v-btn color="blue darken-1" text @click="updateReport">
                     บันทึก
                   </v-btn> -->
-                  <v-col v-if="editedItem.status === 1" style="padding-left: 15%;">
+                  <v-col
+                    v-if="editedItem.status === 1"
+                    style="padding-left: 15%"
+                  >
                     <v-btn color="primary" @click="changeStatus">
                       รับเรื่อง
                     </v-btn>
                   </v-col>
-                  <v-col v-else-if="editedItem.status === 2" style="padding-left: 15%;">
+                  <v-col
+                    v-else-if="editedItem.status === 2"
+                    style="padding-left: 15%"
+                  >
                     <v-btn color="primary" @click="changeStatus">
                       ตรวจสอบเสร็จแล้ว
                     </v-btn>
@@ -381,7 +383,7 @@
           </v-toolbar>
         </template>
 
-        <template #[`item.actions`]="{item}">
+        <template #[`item.actions`]="{ item }">
           <v-icon small class="mr-2" color="primary" @click="editItem(item)">
             mdi-pencil
           </v-icon>
@@ -450,7 +452,9 @@ export default {
         name: null,
         detail: null,
         cause: null,
-        error_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        error_date: new Date(
+          Date.now() - new Date().getTimezoneOffset() * 60000
+        )
           .toISOString()
           .substr(0, 10),
         path: null,
@@ -510,7 +514,9 @@ export default {
 
     async getDev () {
       try {
-        const getDev = await this.$axios.$get('http://localhost:8001/report/getDev')
+        const getDev = await this.$axios.$get(
+          'http://localhost:8001/report/getDev'
+        )
         this.user.firstName = getDev.result.firstName
         this.user.surName = getDev.result.surName
         this.user.role = getDev.result.role
@@ -530,7 +536,10 @@ export default {
           status: this.editedItem.status
         }
         // console.log(payload)
-        await this.$axios.$post('http://localhost:8001/report/devUpdate', payload)
+        await this.$axios.$post(
+          'http://localhost:8001/report/devUpdate',
+          payload
+        )
       } catch (err) {
         console.log(err)
       }
@@ -551,7 +560,10 @@ export default {
           const payload = {
             id: this.editedItem.id
           }
-          await this.$axios.$post('http://localhost:8001/report/changeStatusToProcess', payload)
+          await this.$axios.$post(
+            'http://localhost:8001/report/changeStatusToProcess',
+            payload
+          )
           this.closeEdit()
           await this.$swal({
             icon: 'success',
@@ -564,7 +576,10 @@ export default {
           const payload = {
             id: this.editedItem.id
           }
-          await this.$axios.$post('http://localhost:8001/report/changeStatusToDevFixed', payload)
+          await this.$axios.$post(
+            'http://localhost:8001/report/changeStatusToDevFixed',
+            payload
+          )
           this.closeEdit()
           await this.$swal({
             icon: 'success',
@@ -610,7 +625,9 @@ export default {
 
     async getData () {
       try {
-        const res = await this.$axios.$get('http://localhost:8001/report/devReport')
+        const res = await this.$axios.$get(
+          'http://localhost:8001/report/devReport'
+        )
         // console.log(res.result)
 
         const result = res.result.map((element) => {
@@ -703,3 +720,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.menuBar {
+  position: fixed;
+  z-index: 1;
+  padding: 10px 21px
+}
+
+.box {
+  margin-bottom: -16px !important
+}
+</style>

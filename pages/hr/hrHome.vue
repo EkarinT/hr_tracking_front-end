@@ -22,7 +22,13 @@
               </div>
             </v-btn>
           </v-card>
-          <v-card v-if="dropdown === true" style="padding-right: 10px">
+          <v-card v-if="dropdown === true" class="menuBar">
+            <v-card-subtitle class="v-subtitle" align="center">
+              {{ user.firstName }} {{ user.surName }}
+            </v-card-subtitle>
+            <v-card-subtitle align="center">
+              {{ user.role }}
+            </v-card-subtitle>
             <v-btn block @click="signOut">
               Sign out
             </v-btn>
@@ -112,7 +118,7 @@
                   :color="checkingDev ? '#DD3F2D' : '#FFE4E1'"
                 />
                 <v-list-item-content>
-                  <div class="text-overline">
+                  <div class="text-overline box">
                     dev ตรวจสอบ
                   </div>
                   <v-list-item-title class="text-h5">
@@ -141,7 +147,7 @@
                   :color="fixedByDev ? '#00B8C0' : '#E7FEFF'"
                 />
                 <v-list-item-content>
-                  <div class="text-overline">
+                  <div class="text-overline box">
                     DEV แก้ไขแล้ว
                   </div>
                   <v-list-item-title class="text-h5">
@@ -689,3 +695,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.menuBar {
+  position: fixed;
+  z-index: 1;
+  padding: 10px 21px
+}
+
+.box {
+  margin-bottom: -16px !important
+}
+</style>
